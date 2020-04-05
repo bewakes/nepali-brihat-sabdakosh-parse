@@ -13,6 +13,7 @@ FONT_FAMILIES_TOKEN_MAPPING = {
     # 'EABPNK+FONTASYHIMALITTNORMAL': 'HIMALITT',  # Ignore this as this only serves for page number
     'EABPMI+Preeti': 'PREETI',
     'AICLBD+Himalayabold': 'HIMALAYA',
+    'EABPNM+Himalayabold': 'HIMALAYA',
     'AICLFF+TimesNewRoman': 'TIMESNEWROMAN',
 }
 
@@ -28,7 +29,19 @@ TIMESNEWROMAN_MAP = {
     ')': '˃',
     ' ': ' ',
     '\n': ' ',
+    'O': 'Ȏ',
+    '2': 'ʅ',
+    '=': 'ʭ',
+    '!': 'ʲ',
+    ',': 'ζ',
+    '*': 'Ξ',
+    'N': 'η',
+    'o': 'Ϙ',
+    ';': 'Ȥ',
+    'S': 'Ŝ',
+    'I': 'Ĩ',
 }
+
 
 def get_token_for_span(span):
     for k, v in FONT_FAMILIES_TOKEN_MAPPING.items():
@@ -46,33 +59,7 @@ def preprocess_text(preeti):
 
 
 def process_timesnewroman(txt):
-    tnr_map = {
-        '[': 'Ψ',
-        ']': 'Φ',
-        '~': 'Π',
-        '>': 'Λ',
-        '<': 'ν',
-        '(': '˂',
-        ')': '˃',
-        ' ': ' ',
-        '\n': ' ',
-        'O': 'Ȏ',
-        '2': 'ʅ',
-        '=': 'ʭ',
-        '!': 'ʲ',
-        ',': 'ζ',
-        '*': 'Ξ',
-        'N': 'η',
-        'o': 'Ϙ',
-        ';': 'Ȥ',
-        'S': 'Ŝ',
-        'I': 'Ĩ',
-    }
-    try:
-        return ''.join([tnr_map[x] for x in txt])
-    except Exception as e:
-        print('ERROREANEOUS', txt)
-        raise e
+    return ''.join([TIMESNEWROMAN_MAP[x] for x in txt])
 
 
 def generate_fontfamily_text_list(html: str) -> [str]:
