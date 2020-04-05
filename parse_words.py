@@ -56,8 +56,23 @@ def process_timesnewroman(txt):
         ')': '˃',
         ' ': ' ',
         '\n': ' ',
+        'O': 'Ȏ',
+        '2': 'ʅ',
+        '=': 'ʭ',
+        '!': 'ʲ',
+        ',': 'ζ',
+        '*': 'Ξ',
+        'N': 'η',
+        'o': 'Ϙ',
+        ';': 'Ȥ',
+        'S': 'Ŝ',
+        'I': 'Ĩ',
     }
-    return ''.join([tnr_map[x] for x in txt])
+    try:
+        return ''.join([tnr_map[x] for x in txt])
+    except Exception as e:
+        print('ERROREANEOUS', txt)
+        raise e
 
 
 def generate_fontfamily_text_list(html: str) -> [str]:
@@ -69,6 +84,8 @@ def generate_fontfamily_text_list(html: str) -> [str]:
     for div in divs:
         for span in div.findAll('span'):
             token = get_token_for_span(span)
+            if 'correction' in span.text or 'yakkha' in span.text:
+                continue
             if token is None:
                 continue
             if token == 'TIMESNEWROMAN':
@@ -140,18 +157,12 @@ def get_tokenized_text(html):
 
 def parse_html(html, regex=REGEX):
     full_tokenized_text = get_tokenized_text(html)
-    print('FULL', full_tokenized_text[:100])
 
     reminder_pat = re.compile(f'^{prev_reminder_regex}')
     reminder_match = reminder_pat.match(full_tokenized_text)
     if reminder_match:
-        print('REMINDER', reminder_match.group('reminder'))
         span = reminder_match.span()
-        print('SPAN', span)
         full_tokenized_text = full_tokenized_text[span[1]:]
-        print('NEWFULL', full_tokenized_text[:100])
-    else:
-        print('NO REMINDER')
 
     matches = REGEX.findall(full_tokenized_text)
     return matches

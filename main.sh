@@ -6,7 +6,7 @@ if [ -z "$1" ]; then
 fi
 
 current=$(dirname $0)
-tmp="$current/tmp"
+tmp="$current/tmp2"
 
 mkdir "$tmp" -p
 
