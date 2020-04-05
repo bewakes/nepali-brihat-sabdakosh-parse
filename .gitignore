@@ -1,2 +1,4 @@
 resources/
 tmp/
+__pycache__/
+data/

@@ -39,6 +39,7 @@ symbolsDict=\
     ";":"स",
     ":":"स्",
     "'":"ु",
+    "¦":"ु",
     "\"":"ू",
     ",":",",
     "<":"?",
@@ -46,11 +47,15 @@ symbolsDict=\
     ">":"श्र",
     "/":"र",
     "?":"रु",
+    "¿":"रु",
     "=":".",
     "ˆ":"फ्",
     "Î":"ङ्ख",
     "å":"द्व",
-    "÷":"/"
+    "÷":"/",
+    "±": "+",
+    "Ù": ";",
+    "ª": "ङ",
 }
 
 
@@ -107,3 +112,8 @@ def preeti_to_unicode(preeti_text: str) -> str:
             converted += character
 
     return converted
+
+
+if __name__ == '__main__':
+    preeti = input()
+    print(preeti_to_unicode(preeti))
