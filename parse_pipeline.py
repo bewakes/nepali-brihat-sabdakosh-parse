@@ -40,9 +40,11 @@ def is_preeti(token: Token) -> bool:
     return font == PREETI
 
 
-def convert(token: Token):
+def convert(token: Token, conversions: dict):
     font, txt = token
     if font == PREETI or font == HIMALAYA:
+        for x in txt.split():
+            conversions[x] = preeti_to_unicode(x)
         return preeti_to_unicode(txt)
     return txt
 
@@ -122,12 +124,19 @@ def accumulator(next_pipeline):
 
 
 def file_writer():
-    with open('test.txt', 'w') as writefile:
-        while True:
-            data = (yield)
-            converted = ''.join([convert(x) for x in data])
-            writefile.write(converted)
-            writefile.write('\n')
+    conversions = {}
+    try:
+        with open('test.txt', 'w') as writefile:
+            while True:
+                data = (yield)
+                converted = ''.join([convert(x, conversions) for x in data])
+                writefile.write(converted)
+                writefile.write('\n')
+    except GeneratorExit:
+        with open('conversions.txt', 'w') as convfile:
+            for k, v in conversions.items():
+                convfile.write(f'{k} ==> {v}\n')
+        print('DONE Writing convrsions')
 
 
 def main():
@@ -140,7 +149,7 @@ def main():
     next(blk_parser)
     next(acc)
     next(writer)
-    files_reader(next_pipeline=html_pipeline, files_count=2)
+    files_reader(next_pipeline=html_pipeline)
 
 
 if __name__ == '__main__':
