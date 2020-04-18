@@ -56,6 +56,7 @@ symbolsDict=\
     "±": "+",
     "Ù": ";",
     "ª": "ङ",
+    "F": "ँ",
 }
 
 
@@ -69,6 +70,9 @@ def normalizePreeti(preetitxt):
     preetitxt = preetitxt.replace('If', 'क्ष')
     preetitxt = preetitxt.replace('if', 'ष')
     preetitxt = preetitxt.replace('cf', 'आ')
+    preetitxt = preetitxt.replace('em', 'झ')
+    preetitxt = preetitxt.replace('e{m', 'र्झ')
+    preetitxt = preetitxt.replace("e'm", 'झु')
     index = -1
     while index + 1 < len(preetitxt):
         index += 1

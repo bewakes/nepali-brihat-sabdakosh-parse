@@ -40,11 +40,10 @@ def is_preeti(token: Token) -> bool:
     return font == PREETI
 
 
-def convert(token: Token, conversions: dict):
+def convert(token: Token):
     font, txt = token
-    if font == PREETI or font == HIMALAYA:
-        for x in txt.split():
-            conversions[x] = preeti_to_unicode(x)
+    assert '\n' not in txt, 'newline found in ' + txt
+    if font in (PREETI, HIMALAYA):
         return preeti_to_unicode(txt)
     return txt
 
@@ -76,6 +75,7 @@ def html_to_blocks(next_pipeline):
                     continue
 
                 txt = preprocess_text(span.text)
+                txt = txt.replace('\n', '')
                 token_data = (token, txt)
 
                 # If previous token has same font, just concat them
@@ -112,10 +112,12 @@ def accumulator(next_pipeline):
     current = []
     while True:
         (data, is_previous) = (yield)
+        print('DATA',data)
         current.extend(data)
 
         if not is_previous:
             # TODO: fix when to write
+            print('sent ************************************************')
             next_pipeline.send(previous)
             previous = current
             current = []
@@ -124,19 +126,15 @@ def accumulator(next_pipeline):
 
 
 def file_writer():
-    conversions = {}
     try:
         with open('test.txt', 'w') as writefile:
             while True:
                 data = (yield)
-                converted = ''.join([convert(x, conversions) for x in data])
+                converted = ''.join([convert(x) for x in data])
                 writefile.write(converted)
                 writefile.write('\n')
     except GeneratorExit:
-        with open('conversions.txt', 'w') as convfile:
-            for k, v in conversions.items():
-                convfile.write(f'{k} ==> {v}\n')
-        print('DONE Writing convrsions')
+        print('Done writing')
 
 
 def main():
@@ -149,7 +147,7 @@ def main():
     next(blk_parser)
     next(acc)
     next(writer)
-    files_reader(next_pipeline=html_pipeline)
+    files_reader(next_pipeline=html_pipeline, files_count=2)
 
 
 if __name__ == '__main__':
