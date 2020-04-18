@@ -31,13 +31,14 @@ def preprocess_text(preeti):
     """
     1. Replace ® by equivalent for "ra" in preeti which is "/"
     2. Replace \n by space
+    3. Replace “ by F
     """
-    return preeti.replace('®', '/').replace('\n', ' ')
+    return preeti.replace('®', '/').replace('\n', ' ').replace('“', 'F')
 
 
-def is_preeti(token: Token) -> bool:
+def is_himalaya(token: Token) -> bool:
     font, _ = token
-    return font == PREETI
+    return font == HIMALAYA
 
 
 def convert(token: Token):
@@ -97,7 +98,7 @@ def block_parser(next_pipeline):
             if not block:
                 continue
             # block is continuity if first item is preeeti, NOTE: this is crude
-            is_previous = is_preeti(block[0])
+            is_previous = not is_himalaya(block[0])
             next_pipeline.send((block, is_previous))
     except GeneratorExit:
         print('Done: block_parser')
@@ -109,18 +110,18 @@ def accumulator(next_pipeline):
     block obtained might be continuation of another block, so, write only when
     """
     previous = []
-    current = []
     while True:
         (data, is_previous) = (yield)
-        print('DATA',data)
-        current.extend(data)
 
         if not is_previous:
             # TODO: fix when to write
             print('sent ************************************************')
+            print(previous)
+            print('*****************************************************')
             next_pipeline.send(previous)
-            previous = current
-            current = []
+            previous = data
+        else:
+            previous.extend(data)
 
     next_pipeline.send(previous)
 
